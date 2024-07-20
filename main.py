@@ -17,11 +17,11 @@ def create_account():
 
 def add_profile_picture():
     # Navigate to profile and add profile picture
-    d(resourceId="com.lemon8.app:id/profile_tab").click()
+    d(resourceId="com.bd.nproject:id/bottomTabItemProfile").click()
     sleep(2)
-    d(resourceId="com.lemon8.app:id/edit_profile_button").click()
+    d(resourceId="com.bd.nproject:id/profileEdit").click()
     sleep(2)
-    d(resourceId="com.lemon8.app:id/profile_picture").click()
+    d(resourceId="com.bd.nproject:id/profileCameraIv").click()
     sleep(2)
     d(resourceId="com.lemon8.app:id/select_from_gallery").click()
     sleep(2)
@@ -33,7 +33,7 @@ def add_profile_picture():
 
 def make_post(images):
     # Create a post with a slideshow
-    d(resourceId="com.lemon8.app:id/new_post_button").click()
+    d(resourceId="com.bd.nproject:id/bottomTabItemUgc").click()
     sleep(2)
     for image in images:
         d(resourceId="com.lemon8.app:id/add_image_button").click()
