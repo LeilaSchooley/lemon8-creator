@@ -1,113 +1,136 @@
+import subprocess
+
 import uiautomator2 as u2
 from time import sleep
 
-# Connect to the device (replace 'emulator-5554' with your device's serial)
-d = u2.connect()
 
+class Lemon8Automation:
+    def __init__(self, device_serial=None):
+        self.d = u2.connect(device_serial)
 
-def create_account():
-    # Automate account creation
-    d(resourceId="com.lemon8.app:id/create_account_button").click()
-    sleep(2)
-    d(resourceId="com.lemon8.app:id/username").set_text("username")
-    d(resourceId="com.lemon8.app:id/password").set_text("password")
-    d(resourceId="com.lemon8.app:id/submit").click()
-    sleep(2)
-
-
-def add_profile_picture():
-    # Navigate to profile and add profile picture
-    d(resourceId="com.bd.nproject:id/bottomTabItemProfile").click()
-    sleep(2)
-    d(resourceId="com.bd.nproject:id/profileEdit").click()
-    sleep(2)
-    d(resourceId="com.bd.nproject:id/profileCameraIv").click()
-    sleep(2)
-    d(resourceId="com.lemon8.app:id/select_from_gallery").click()
-    sleep(2)
-    d(resourceId="com.lemon8.app:id/image").click()
-    sleep(2)
-    d(resourceId="com.lemon8.app:id/confirm").click()
-    sleep(2)
-
-
-def make_post(images):
-    # Create a post with a slideshow
-    d(resourceId="com.bd.nproject:id/bottomTabItemUgc").click()
-    sleep(2)
-    for image in images:
-        d(resourceId="com.lemon8.app:id/add_image_button").click()
+    def create_account(self):
+        # Automate account creation
+        self.d(resourceId="com.lemon8.app:id/create_account_button").click()
         sleep(2)
-        d.xpath(f'//android.widget.TextView[@text="{image}"]').click()
-        sleep(2)
-    d(resourceId="com.lemon8.app:id/submit_post").click()
-    sleep(2)
-
-
-def log_out():
-    # Log out from the account
-    d(resourceId="com.lemon8.app:id/profile_tab").click()
-    sleep(2)
-    d(resourceId="com.lemon8.app:id/settings").click()
-    sleep(2)
-    d(resourceId="com.lemon8.app:id/logout").click()
-    sleep(2)
-
-
-def mass_dm(follower_list):
-    # DM all followers
-    for follower in follower_list:
-        d(resourceId="com.lemon8.app:id/search").click()
-        sleep(2)
-        d(resourceId="com.lemon8.app:id/search_input").set_text(follower)
-        sleep(2)
-        d(resourceId="com.lemon8.app:id/followers").click()
-        sleep(2)
-        d(resourceId="com.lemon8.app:id/message_button").click()
-        sleep(2)
-        d(resourceId="com.lemon8.app:id/message_input").set_text("Hello!")
-        sleep(2)
-        d(resourceId="com.lemon8.app:id/send_message").click()
+        self.d(resourceId="com.lemon8.app:id/username").set_text("username")
+        self.d(resourceId="com.lemon8.app:id/password").set_text("password")
+        self.d(resourceId="com.lemon8.app:id/submit").click()
         sleep(2)
 
-
-def mass_tag(users, parent_post):
-    # Tag users in a parent post
-    d(resourceId="com.lemon8.app:id/post_tab").click()
-    sleep(2)
-    d(resourceId=f'com.lemon8.app:id/{parent_post}').click()
-    sleep(2)
-    d(resourceId="com.lemon8.app:id/tag_button").click()
-    sleep(2)
-    for user in users:
-        d(resourceId="com.lemon8.app:id/tag_input").set_text(user)
+    def add_profile_picture(self):
+        # Navigate to profile and add profile picture
+        self.d(resourceId="com.bd.nproject:id/bottomTabItemProfile").click()
         sleep(2)
-        d(resourceId="com.lemon8.app:id/tag_user").click()
+        self.d(resourceId="com.bd.nproject:id/profileEdit").click()
         sleep(2)
-    d(resourceId="com.lemon8.app:id/confirm_tag").click()
-    sleep(2)
+        self.d(resourceId="com.bd.nproject:id/profileCameraIv").click()
+        sleep(2)
+        self.d(resourceId="com.lemon8.app:id/select_from_gallery").click()
+        sleep(2)
+        self.d(resourceId="com.lemon8.app:id/image").click()
+        sleep(2)
+        self.d(resourceId="com.lemon8.app:id/confirm").click()
+        sleep(2)
 
-
-def main():
-    accounts_to_create = 10
-    images = ["image1.jpg", "image2.jpg", "image3.jpg", "image4.jpg"]
-
-    for _ in range(accounts_to_create):
-        create_account()
-        add_profile_picture()
+    def make_post(self):
+        # Create a post with a slideshow
+        self.d(resourceId="com.bd.nproject:id/bottomTabItemUgc").click()
+        sleep(2)
         for _ in range(3):
-            make_post(images)
-        log_out()
+            self.d(resourceId="com.lemon8.app:id/add_image_button").click()
+            sleep(2)
+            self.d(resourceId="com.lemon8.app:id/image").click()  # Adjust the resource ID if necessary
+            sleep(2)
+        self.d(resourceId="com.bd.nproject:id/post_hot_view").click()
+        sleep(2)
 
-    # For mass DM and tagging
-    follower_list = ["user1", "user2", "user3"]
-    parent_post = "post_id"
-    users_to_tag = ["user4", "user5", "user6"]
+    def log_out(self):
+        # Log out from the account
+        self.d(resourceId="com.bd.nproject:id/navigation_bar_item_icon_view").click()
+        sleep(2)
+        self.d(resourceId="com.bd.nproject:id/lemonNavigationBarRightClickMultipleThreeViewThreeClick").click()
+        sleep(2)
+        self.d(text="Log out").click()
+        sleep(2)
+        self.d(text="Log out").click()
+        if (self.d(text="When is your date of birth?")).exists:
+            return True
+        else:
+            return False
 
-    mass_dm(follower_list)
-    mass_tag(users_to_tag, parent_post)
+    def dismiss_keyboard(self):
+        self.d.press("back")
+        print("Dismissed keyboard.")
+
+    def mass_dm(self, follower_list, message):
+        results = []
+        # DM all followers
+        for follower in follower_list:
+            self.d(resourceId="com.bd.nproject:id/navigation_bar_item_icon_view").click()
+            sleep(2)
+            self.d(resourceId="com.bd.nproject:id/newLemonSearchbarEditText").set_text(follower)
+            sleep(2)
+            self.d(text="Accounts").click()
+            self.d(className="com.lynx.tasm.behavior.ui.text.FlattenUIText").click()
+            sleep(2)
+            self.d(resourceId="com.bd.nproject:id/lemonButtonIc").click()
+            sleep(2)
+
+            self.d(text="Send a message...").set_text(message)
+            sleep(2)
+            subprocess.run(["adb", "shell", "input", "keyevent", "KEYCODE_ENTER"])
+            sleep(2)
+            self.dismiss_keyboard()
+
+            results.append(True)
+        return results
+    def mass_tag(self, users, parent_post):
+        # Tag users in a parent post
+        self.d(resourceId="com.lemon8.app:id/post_tab").click()
+        sleep(2)
+        self.d(resourceId=f'com.lemon8.app:id/{parent_post}').click()
+        sleep(2)
+        self.d(resourceId="com.lemon8.app:id/tag_button").click()
+        sleep(2)
+        for user in users:
+            self.d(resourceId="com.lemon8.app:id/tag_input").set_text(user)
+            sleep(2)
+            self.d(resourceId="com.lemon8.app:id/tag_user").click()
+            sleep(2)
+        self.d(resourceId="com.lemon8.app:id/confirm_tag").click()
+        sleep(2)
+
+    def run(self):
+        accounts_to_create = 10
+        images = ["image1.jpg", "image2.jpg", "image3.jpg", "image4.jpg"]
+
+        for _ in range(accounts_to_create):
+            self.create_account()
+            self.add_profile_picture()
+            for _ in range(3):
+                self.make_post(images)
+            self.log_out()
+
+        # Read the follower list from a file
+        follower_list = self.read_follower_list("follow_list.txt")
+        parent_post = "post_id"
+        users_to_tag = ["user4", "user5", "user6"]
+
+        self.mass_dm(follower_list)
+        self.mass_tag(users_to_tag, parent_post)
+
+    def read_follower_list(self, file_path):
+        with open(file_path, "r") as file:
+            follower_list = [line.strip() for line in file.readlines()]
+        return follower_list
 
 
 if __name__ == "__main__":
-    #main()
-    print(d.dump_hierarchy())
+    # Initialize the automation class
+    automation = Lemon8Automation()
+
+    # Uncomment to run the main function
+    # automation.run()
+
+    # Print the UI hierarchy for debugging
+    print(automation.d.dump_hierarchy())
